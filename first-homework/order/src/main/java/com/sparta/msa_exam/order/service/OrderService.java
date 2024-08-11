@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,16 @@ public class OrderService {
     private final ProductClient productClient;
     private final OrderRepository orderRepository;
 
-    public List<ProductResponseDto> getAllProductsFromProductService() {
-        return productClient.getProductList();
+    public ResponseEntity<List<ProductResponseDto>> getAllProductsFromProductService() {
+        // FeignClient를 통해 제품 리스트를 가져옴
+        ResponseEntity<List<ProductResponseDto>> responseEntity = productClient.getProductList();
+        return responseEntity;
     }
+
 
     public ProductResponseDto createProductInProductService(ProductRequestDto productDto) {
         ResponseEntity<ProductResponseDto> responseEntity = productClient.createProduct(productDto);
-        return responseEntity.getBody(); // 생성된 상품의 정보를 반환
+        return responseEntity.getBody();
     }
 
 

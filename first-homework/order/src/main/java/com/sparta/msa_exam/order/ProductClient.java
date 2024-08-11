@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface ProductClient {
 
     @GetMapping("/products")
-    List<ProductResponseDto> getProductList();
+    ResponseEntity<List<ProductResponseDto>> getProductList();
 
     @PostMapping("/products")
     ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto productDto);

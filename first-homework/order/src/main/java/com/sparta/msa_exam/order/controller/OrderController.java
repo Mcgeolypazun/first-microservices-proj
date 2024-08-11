@@ -24,9 +24,9 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @Cacheable(value = "products")  // 'products'라는 캐시 이름으로 캐시 적용
+//    @Cacheable(value = "products")  // 'products'라는 캐시 이름으로 캐시 적용
     @GetMapping("/products")
-    public List<ProductResponseDto> getAllProducts() {
+    public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         return orderService.getAllProductsFromProductService();
     }
 
@@ -45,17 +45,19 @@ public class OrderController {
     }
 
     @PutMapping("/order/{orderId}")
-    public ResponseEntity<OrderDto> addProductToOrder(
+    @CacheEvict(value = "orders", key = "#orderId")
+    public OrderDto addProductToOrder(
         @PathVariable Long orderId,
         @RequestBody ProductDto productDto
     ) {
         OrderDto updatedOrder = orderService.addProductToOrder(orderId, productDto.getProductId());
-        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+        return updatedOrder;
     }
 
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<OrderDto> getOrder(@PathVariable Long orderId) {
+    @Cacheable(value = "orders", key = "#orderId")
+    public OrderDto getOrder(@PathVariable Long orderId) {
         OrderDto order = orderService.getOrderById(orderId);
-        return new ResponseEntity<>(order, HttpStatus.OK);
+        return order;
     }
 }
