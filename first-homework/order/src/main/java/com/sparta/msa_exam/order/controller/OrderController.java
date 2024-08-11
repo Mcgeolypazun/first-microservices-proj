@@ -5,6 +5,8 @@ import com.sparta.msa_exam.order.dto.ProductDto;
 import com.sparta.msa_exam.order.dto.ProductRequestDto;
 import com.sparta.msa_exam.order.dto.ProductResponseDto;
 import com.sparta.msa_exam.order.service.OrderService;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,11 +24,13 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @Cacheable(value = "products")  // 'products'라는 캐시 이름으로 캐시 적용
     @GetMapping("/products")
     public List<ProductResponseDto> getAllProducts() {
         return orderService.getAllProductsFromProductService();
     }
 
+    @CacheEvict(value = "products", allEntries = true)  // 상품 추가 시 캐시 삭제
     @PostMapping("/products")
     public ResponseEntity<ProductResponseDto> createProduct(
         @RequestBody ProductRequestDto productDto) {
